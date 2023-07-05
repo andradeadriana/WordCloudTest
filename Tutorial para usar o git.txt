@@ -1,0 +1,62 @@
+1- Configura
+2- seta o diretório. Basta arrastar a pasta para linha de comandando e colocar cd antes
+$ cd /c/git
+
+3 - Pede pra ver o diretório
+$ dir
+
+4 - Inicializa o diretório
+$ git init
+
+5 -Pede status para visualizar os arquivos no diretório e seus respectivos status
+$ git status
+
+6- Realizar o tracking para fazer o snapshot. No momento os arquivos estão untracked, sem cópia.
+
+Para tal: git add nome.do arquivo. Depois do add o arquivo passa pro estágio de estaged, pronto pro commit 
+Pode fazer um de cada vez ou git add .
+
+7 - Fazer o commit. Pega os arquivos que estão staged e faz um snapshot
+
+git commit -m"Primeiro commit"
+
+8 - O comando git diff lista todas as alterações
+
+O arquivo pode estar em tres estágios: 
+working 
+- staging: git add
+- commit: git commit -m"alteração"
+
+Porém, é possível ir direto do working pro commit:
+git commit -a -m"direto por commit"
+
+Para listar alterações
+git log
+git log --oneline =>mostra o log simplificado
+
+9) Removendo e restaurando
+git rm nomne.jpg rm
+git restore --staged nome.jpg
+git restore nome.jpg
+
+10) Renomear arquivo
+git mv nomeantigo.jpg novonome.jpg
+
+11) Criação de branch - boas praticas
+
+git branch NomeBranch
+
+-para tornar ativa uma branch:
+git switch Nomebranch
+
+- merge de branch para atualizar
+git merge -m "Merge da branch 1 para 2" BranchDeOndeVemaMudança
+
+
+
+
+
+Agora todas as alterações podem ser removidas
+
+
+ 

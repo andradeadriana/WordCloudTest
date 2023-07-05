@@ -80,9 +80,11 @@ text_token <- text_token %>%
 # remove numbers
 #nums <- tokens_clean %>% filter(str_detect(word, "^[0-9]")) %>% #select(word) %>% unique()
 
+```
 
 #Gráfico de palavras
 
+```{r}
 text_token %>%
   count(termo, sort = TRUE) %>%
       filter(n > 3) %>% 
@@ -90,9 +92,10 @@ text_token %>%
   ggplot(aes(n, termo)) +
   geom_col() +
   labs(y = NULL)
-
-
 ```
+
+
+
 
 ```{r wordcloud}
 # define a nice color palette
@@ -108,3 +111,8 @@ text_cloud <-text_token %>%
 wordcloud2::wordcloud2(text_cloud)
 
 ```
+
+```{r}
+table(text_cloud$n)
+```
+

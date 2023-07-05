@@ -1,0 +1,110 @@
+---
+title: "Vignette Title"
+author: "Vignette Author"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r}
+#Libraries
+warning(F)
+library(tidyverse)
+library(ggplot2)
+library(plotly)
+library(wordcloud)
+
+
+
+```
+
+
+
+```{r data}
+
+#texto<-read.csv("G:/Meu Drive/_UFRRJ/2022_1SEM/texto.csv", encoding = "UTF-8")
+
+library(readxl)
+
+data<-read_xlsx("Base_2022_1.xlsx")
+
+```
+
+
+```{r setup, include=FALSE}
+pacman::p_load(tidyverse,rbokeh,flexdashboard,tidytext)
+
+```
+
+
+
+### Análise de Sentimento
+
+```{r Definição das StopWords, include=FALSE}
+
+expectativa<-data$Expectativa
+
+stopword<-c("de", "a", "o", "que", "e", "do", "da", "em", "um", "para", "é", "com", "não", "uma", "os", "no", "se", "na", "por", "mais", "as", "dos", "como", "mas", "foi", "ao", "ele", "das", "tem", "à", "seu", "sua", "ou", "ser", "quando","com", "muito", "há", "nos", "já", "está", "eu", "também", "só", "pelo", "pela", "até", "isso", "ela", "entre", "era", "depois", "sem", "mesmo", "aos", "ter", "seus", "quem", "nas", "me", "esse", "desse", "dessa", "eles", "estão", "você", "tinha", "foram", "essa", "num", "nem", "suas", "meu", "às", "minha", "têm", "numa", "pelos", "elas", "havia", "seja", "qual", "será", "nós", "tenho", "lhe", "deles", "essas", "esses", "pelas", "este", "fosse", "dele", "tu", "te", "vocês", "vos", "lhes", "meus", "minhas", "teu", "tua", "teus", "tuas", "nosso", "nossa", "nossos", "nossas", "dela", "delas", "esta", "este","estes", "estas", "aquele", "aquela", "aqueles", "aquelas", "isto", "aquilo", "estou", "está", "estamos", "estão", "estive", "esteve", "estivemos", "estiveram", "estava", "estávamos", "estavam", "estivera", "estivéramos", "esteja", "estejamos", "estejam", "estivesse", "estivéssemos", "estivessem", "estiver", "estivermos", "estiverem", "hei", "há", "havemos", "hão", "houve", "houvemos", "houveram", "houvera", "houvéramos", "haja", "hajamos", "hajam", "houvesse", "houvéssemos", "houvessem", "houver", "houvermos", "houverem", "houverei", "houverá", "houveremos", "houverão", "houveria", "houveríamos", "houveriam", "sou", "somos", "são", "era", "éramos", "eram", "fui", "foi", "fomos", "foram", "fora", "fôramos", "seja", "sejamos", "sejam", "fosse", "fôssemos", "fossem", "for", "formos", "forem", "serei", "será", "seremos", "serão", "seria", "seríamos", "seriam", "tenho", "tem", "temos", "tém", "tinha", "tínhamos", "tinham", "tive", "teve", "tivemos", "tiveram", "tivera", "tivéramos", "tenha", "tenhamos", "tenham", "tivesse", "tivéssemos", "tivessem", "tiver", "tivermos", "tiverem", "terei", "terá", "teremos", "terão", "teria", "teríamos", "teriam","sobre","partir", "desde","deste","algum","alguns","alguma","algumas")
+
+
+stop_word<-tibble(stopword)
+
+```
+
+
+```{r - Arrumação em formatdo tidy - tokenization, echo=FALSE}
+library(tidytext)
+
+text_df <- tibble(line = 1:73, text = expectativa)
+
+
+#Tokenization
+text_token<-text_df %>%
+  unnest_tokens(output = termo, input = text, token = "words",to_lower = TRUE)
+
+
+#Anti-join para exclusão de stop words
+text_token <- text_token %>%
+  anti_join(stop_word,by = c("termo" = "stopword"))
+
+
+#use a regex to clean all numbers.
+
+# remove numbers
+#nums <- tokens_clean %>% filter(str_detect(word, "^[0-9]")) %>% #select(word) %>% unique()
+
+
+#Gráfico de palavras
+
+text_token %>%
+  count(termo, sort = TRUE) %>%
+      filter(n > 3) %>% 
+  mutate(word = reorder(termo,n)) %>%
+  ggplot(aes(n, termo)) +
+  geom_col() +
+  labs(y = NULL)
+
+
+```
+
+```{r wordcloud}
+# define a nice color palette
+pal <- RColorBrewer::brewer.pal(8,"Dark2")
+pal2 <- gray.colors(50, start = 1, end = 0)
+pal3<-RColorBrewer::brewer.pal(3,"Greys")
+
+library(wordcloud2)
+
+text_cloud <-text_token %>%
+  count(termo, sort = TRUE)
+
+wordcloud2::wordcloud2(text_cloud)
+
+```

@@ -1,0 +1,124 @@
+---
+title: "Dashboard Analise"
+author: "Adriana"
+runtime: shiny
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: column
+    vertical_layout: fill
+    storyboard: true
+    theme: yeti
+    logo: logo.png
+    favicon: logo.png
+    
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(ggplot2)
+library(plotly)
+
+iris<-iris
+
+```
+
+
+# Visualização {data-icon="fa-signal" data-navmenu="Analises"}
+
+## sidebar {.sidebar}
+
+```{r}
+inputPanel(
+  selectInput("Species",label =h3("Selecione a espécie:"),
+      choices = list("setosa","versicolor","virginica","todas"),
+      selected = "todas"))
+
+dados<-reactive({
+  iris2<-iris %>% 
+    filter(str_detect(Species,                  ifelse(input$Species =="todas","",input$Species)))
+  return(iris2)})
+
+renderPlotly({
+  grafico = ggplot(
+    data = dados(),
+    aes(x=Sepal_width, y=Sepal_length, color=Species))+
+    geom_point  ()
+  
+  ggplotly(grafico)
+  })
+
+
+
+```
+
+
+
+## Column {data-width=650}
+
+### Gráficos de pontos
+
+```{r}
+
+grafico_pontos<-ggplot(data=iris,
+                       aes(x=Sepal.Width, y=Sepal.Length, color=Species))+
+  geom_point()
+
+ggplotly(grafico_pontos)
+
+```
+
+## Column {data-width=650}{.tabset} 
+
+### BOXPLOT_WIDTH
+
+```{r}
+
+boxplot1<-ggplot(data=iris,
+                       aes(x=Species, y=Sepal.Width, color=Species))+
+  geom_boxplot()
+ggplotly(boxplot1)
+```
+
+## Column {data-width=650} {.tabset} 
+
+### BOXPLOT_LENGTH
+
+
+```{r}
+
+boxplot2<-ggplot(data=iris,
+                       aes(x=Species, y=Sepal.Length, color=Species))+
+  geom_boxplot()
+ggplotly(boxplot2)
+```
+
+
+## Column {data-width=650} {.tabset} 
+### HIST_LENGTH
+
+
+```{r}
+
+hist1<-ggplot(data=iris,
+                       aes(x=Sepal.Length))+
+  geom_histogram()
+ggplotly(hist1)
+```
+
+# Tabelas {data.table=row data-icon="fa-table" data-navmenu="Analises"}
+
+## sidebar {.sidebar}
+aqui tem tableas
+
+
+```{r}
+valueBox(mean(iris$Sepal.Length), icon="fa-pencil", color="primary")
+```
+
+
+### Tabela1
+
+### Tabela2
+
+### Tabela3
